@@ -4,9 +4,11 @@
 HOST_CC = $(CC)
 HOST_AR = $(AR)
 
+HOST_CFLAGS =
+
 define host_library
 	$(AR)$% rc $@ $^
 endef
 
 %.host.o: %.c
-	$(HOST_CC) -c $< -o $@
+	$(HOST_CC) $(GLOBAL_CFLAGS) $(HOST_CFLAGS) $(LOCAL_CFLAGS) -c -o $@ $<

@@ -3,6 +3,7 @@
 
 .SECONDARY:
 
+include toolchain/global.mk
 include toolchain/host.mk
 
 include lib/fat.mk
