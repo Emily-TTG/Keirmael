@@ -7,7 +7,7 @@ HOST_AR = $(AR)
 HOST_CFLAGS =
 
 define host_library
-	$(AR)$% rc $@ $^
+	$(HOST_AR) rc $@ $^
 endef
 
 %.host.o: %.c

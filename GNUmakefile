@@ -5,11 +5,12 @@
 
 include toolchain/global.mk
 include toolchain/host.mk
+include toolchain/target.mk
 
 include lib/fat.mk
 
 .PHONY: all
-all: lib/libfat.host.a
+all: lib/libfat.host.a lib/libfat.target.a
 
 .PHONY: clean
 clean:
