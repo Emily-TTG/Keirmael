@@ -1,9 +1,6 @@
 # SPDX-Licence-Identifier: X11
 # Copyright (C) 2025 Emily "TTG" Banerjee <prs.ttg+kml@pm.me>
 
-*.o
-*.a
-*.out
+FAT_SOURCES = $(wildcard lib/fat/*.c)
 
-image/root/*
-!image/root/hyper.cfg
+lib/libfat.%.a: $(FAT_SOURCES:.c=.%.o) ; ${$*_library}

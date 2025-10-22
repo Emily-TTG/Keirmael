@@ -7,10 +7,16 @@ include toolchain/global.mk
 include toolchain/host.mk
 include toolchain/target.mk
 
-include lib/fat.mk
+include lib/fat/fat.mk
+
+include kernel/kernel.mk
+
+include image/image.mk
+
+.DEFAULT_GOAL := all
 
 .PHONY: all
-all: lib/libfat.host.a lib/libfat.target.a
+all: kernel/kernel.target.out
 
 .PHONY: clean
 clean:

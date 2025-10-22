@@ -4,10 +4,12 @@
 HOST_CC = $(CC)
 HOST_AR = $(AR)
 
-HOST_CFLAGS =
-
 define host_library
 	$(HOST_AR) rc $@ $^
+endef
+
+define host_executable
+	$(HOST_CC) $(GLOBAL_LDFLAGS) $(HOST_LDFLAGS) $(LOCAL_LDFLAGS) -o $@ $^
 endef
 
 %.host.o: %.c
