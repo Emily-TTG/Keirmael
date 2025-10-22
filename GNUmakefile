@@ -7,6 +7,7 @@ include toolchain/global.mk
 include toolchain/host.mk
 include toolchain/target.mk
 
+include lib/base/base.mk
 include lib/fat/fat.mk
 
 include kernel/kernel.mk
