@@ -21,4 +21,3 @@ all: kernel/kernel.target.out
 
 .PHONY: clean
 clean:
-	git clean -fX

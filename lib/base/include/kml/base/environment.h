@@ -3,7 +3,4 @@
 
 #pragma once
 
-enum [[nodiscard]] kml_base_result {
-	KML_BASE_RESULT_OK,
-	KML_BASE_RESULT_ERROR_UNKNOWN
-};
+#define KML_BASE_ASM __asm__

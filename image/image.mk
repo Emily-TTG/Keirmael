@@ -17,4 +17,8 @@ image/root/efi/boot:
 
 .PHONY: run
 run: image/root/keirmael.elf image/root/efi/boot/$(TARGET_EFI)
-	$(TARGET_QEMU) -drive file=fat:rw:image/root,media=disk,format=raw -drive if=pflash,format=raw,readonly=on,file=$(OVMF) -debugcon stdio -display none -no-reboot
+	$(TARGET_QEMU) -drive file=fat:rw:image/root,media=disk,format=raw -drive if=pflash,format=raw,readonly=on,file=$(OVMF) -debugcon stdio -display none -no-reboot $(QEMU_FLAGS)
+
+.PHONY: debug
+debug: QEMU_FLAGS = -s -S -d int
+debug: run
