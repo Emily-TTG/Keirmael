@@ -41,5 +41,5 @@ void kml_kernel_arch_amd64_start(
 
 	kml_base_log_result(
 			__FILE__, KML_BASE_RESULT_ERROR_INVALID_CONTROL_PATH,
-			"kml_kernel_arch_amd64_start($P, $I)", boot_context, magic);
+			"kml_kernel_arch_amd64_start($P, $X)", boot_context, magic);
 }

@@ -103,12 +103,11 @@ enum kml_base_result kml_base_string_format_callback_variadic(
 
 			case 'P': {
 				value = KML_BASE_VARIADIC_GET(variadic, kml_base_pointer_t);
+				goto format_hex;
+			}
 
-				result = callback('0', passthrough);
-				if(result) return result;
-				result = callback('x', passthrough);
-				if(result) return result;
-
+			case 'X': {
+				value = KML_BASE_VARIADIC_GET(variadic, unsigned);
 				goto format_hex;
 			}
 
@@ -147,10 +146,13 @@ enum kml_base_result kml_base_string_format_callback_variadic(
 		continue;
 
 	format_hex:
-		static const char hex_digits[] = "0123456789ABCDEF";
+		result = callback('0', passthrough);
+		if(result) return result;
+		result = callback('x', passthrough);
+		if(result) return result;
 
 		do {
-			intermediate[digit++] = (int) hex_digits[value % 16];
+			intermediate[digit++] = (int) "0123456789ABCDEF"[value % 16];
 		} while(value /= 16);
 
 		digit--;

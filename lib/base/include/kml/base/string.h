@@ -70,6 +70,7 @@ enum kml_base_result kml_base_string_format_buffer_variadic(
  * | `S`                        | `const char*`                             |
  * | `C`                        | `char`                                    |
  * | `P`                        | Any pointer type, or `kml_base_pointer_t` |
+ * | `X`                        | `unsigned`                                |
  * \param[in] 0 A callback function to be called for each formatted character output.
  * \param[in,out] 1 An arbitrary pointer to be passed through to the callback function.
  * \param[in] 2 A format specifier string.
