@@ -66,6 +66,9 @@ enum kml_base_result kml_base_string_format_callback_variadic(
 		kml_base_u64_t value;
 		const char* string;
 
+		int intermediate[20] = {};
+		kml_base_size_t digit = 0;
+
 		switch(character) {
 			case 'C': {
 				char format_character = KML_BASE_VARIADIC_GET(variadic, int);
@@ -98,6 +101,17 @@ enum kml_base_result kml_base_string_format_callback_variadic(
 				goto format_string;
 			}
 
+			case 'P': {
+				value = KML_BASE_VARIADIC_GET(variadic, kml_base_pointer_t);
+
+				result = callback('0', passthrough);
+				if(result) return result;
+				result = callback('x', passthrough);
+				if(result) return result;
+
+				goto format_hex;
+			}
+
 			default: return KML_BASE_RESULT_ERROR_INVALID_FORMAT_SPECIFIER;
 		}
 
@@ -113,9 +127,14 @@ enum kml_base_result kml_base_string_format_callback_variadic(
 
 	format_unsigned:
 		do {
-			result = callback('0' + (int) (value % 10), passthrough);
-			if(result) return result;
+			intermediate[digit++] = '0' + (int) (value % 10);
 		} while(value /= 10);
+
+		digit--;
+		do {
+			result = callback(intermediate[digit], passthrough);
+			if(result) return result;
+		} while(--digit > 0);
 
 		continue;
 
@@ -124,6 +143,21 @@ enum kml_base_result kml_base_string_format_callback_variadic(
 			result = callback(*string, passthrough);
 			if(result) return result;
 		}
+
+		continue;
+
+	format_hex:
+		static const char hex_digits[] = "0123456789ABCDEF";
+
+		do {
+			intermediate[digit++] = (int) hex_digits[value % 16];
+		} while(value /= 16);
+
+		digit--;
+		do {
+			result = callback(intermediate[digit], passthrough);
+			if(result) return result;
+		} while(--digit > 0);
 	}
 
 	return KML_BASE_RESULT_OK;
