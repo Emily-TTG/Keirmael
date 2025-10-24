@@ -4,6 +4,8 @@
 HOST_CC = $(CC)
 HOST_AR = $(AR)
 
+HOST_CFLAGS += -DKML_HOST=1
+
 define host_library
 	$(HOST_AR) rc $@ $^
 endef

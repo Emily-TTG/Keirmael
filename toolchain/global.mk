@@ -8,7 +8,7 @@ ifdef MAINTAINER
 endif
 
 ifdef DEBUG
-	GLOBAL_CFLAGS += -glldb
+	GLOBAL_CFLAGS += -g
 else
 	GLOBAL_CFLAGS += -DNDEBUG
 endif

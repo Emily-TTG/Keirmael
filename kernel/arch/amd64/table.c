@@ -15,7 +15,7 @@ enum [[clang::enum_extensibility(closed)]] kml_kernel_arch_amd64_gdt_index {
 
 static struct kml_kernel_arch_amd64_gdt_entry kml_global_kernel_arch_amd64_gdt[KML_KERNEL_ARCH_AMD64_GDT_INDEX_MAX] = {
 	// Null Descriptor.
-	[KML_KERNEL_ARCH_AMD64_GDT_INDEX_NULL] = { 0 },
+	[KML_KERNEL_ARCH_AMD64_GDT_INDEX_NULL] = {},
 
 	// Kernel Code.
 	[KML_KERNEL_ARCH_AMD64_GDT_INDEX_KERNEL_CODE] = {

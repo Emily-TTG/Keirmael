@@ -5,6 +5,8 @@ TARGET = amd64
 
 include toolchain/target/$(TARGET).mk
 
+TARGET_CFLAGS += -DKML_TARGET=1
+
 define target_library
 	$(TARGET_AR) rc $@ $^
 endef

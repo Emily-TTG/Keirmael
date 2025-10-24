@@ -5,5 +5,5 @@ TARGET_CC = clang
 TARGET_AR = llvm-ar
 TARGET_LD = ld.lld
 
-TARGET_CFLAGS = -fPIC --target=x86_64-unknown-elf
-TARGET_LDFLAGS =
+TARGET_CFLAGS = -fPIC --target=x86_64-unknown-elf -mno-red-zone
+TARGET_CFLAGS += -mno-mmx -mno-sse -mno-sse2 -mno-sse3 -mno-3dnow

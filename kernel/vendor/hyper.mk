@@ -12,3 +12,7 @@ HYPER_FLAGS += --e9-debug-log on
 
 $(HYPER_OUT):
 	$(HYPER_DIRECTORY)/build.py $(HYPER_FLAGS)
+
+.PHONY: clean_hyper
+clean_hyper:
+	rm -rf $(HYPER_BUILD)

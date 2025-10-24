@@ -22,3 +22,8 @@ run: image/root/keirmael.elf image/root/efi/boot/$(TARGET_EFI)
 .PHONY: debug
 debug: QEMU_FLAGS = -s -S -d int
 debug: run
+
+.PHONY: clean_image
+clean_image:
+	rm -rf image/root/efi
+	rm -f image/root/keirmael.elf

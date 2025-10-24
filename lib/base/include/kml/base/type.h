@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <kml/base/environment.h>
+
 #define KML_BASE_BYTE_BIT (8u)
 
 typedef unsigned char kml_base_byte_t;
@@ -15,13 +17,14 @@ enum [[clang::enum_extensibility(closed)]] kml_base_bool {
 typedef unsigned char kml_base_u8_t;
 typedef unsigned short kml_base_u16_t;
 typedef unsigned int kml_base_u32_t;
-typedef unsigned long kml_base_u64_t;
+typedef unsigned long long kml_base_u64_t;
 
 typedef signed char kml_base_s8_t;
 typedef short kml_base_s16_t;
 typedef int kml_base_s32_t;
-typedef long kml_base_s64_t;
+typedef long long kml_base_s64_t;
 
-#ifdef __amd64__
-typedef kml_base_u64_t kml_base_uptr_t;
+#ifdef KML_BASE_ARCH_64
+typedef kml_base_u64_t kml_base_pointer_t;
+typedef kml_base_u64_t kml_base_size_t;
 #endif
