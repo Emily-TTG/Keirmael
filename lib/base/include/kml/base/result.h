@@ -13,7 +13,11 @@ enum [[clang::enum_extensibility(closed)]] [[nodiscard]] kml_base_result {
 	/// A system function call resulted in the setting of `errno`. This should
 	/// be logged with the more descriptive system-specific interfaces in addition
 	/// to the return of this result at the error site.
-	KML_BASE_RESULT_ERROR_ERRNO
+	KML_BASE_RESULT_ERROR_ERRNO,
+	/// An invalid control flow path was reached.
+	KML_BASE_RESULT_ERROR_INVALID_CONTROL_PATH,
+	/// A parameter's value was out of expected range or format.
+	KML_BASE_RESULT_ERROR_INVALID_PARAMETER
 };
 
 const char* kml_base_result_name(enum kml_base_result);

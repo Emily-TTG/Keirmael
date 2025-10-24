@@ -20,14 +20,26 @@ enum kml_base_result kml_base_log_character(int character) {
 void kml_kernel_arch_amd64_start(
 		struct ultra_boot_context* boot_context, uint32_t magic) {
 
-	KML_BASE_ASM("cli");
-
 	(void) boot_context;
 	(void) magic;
 
-	kml_base_log(__FILE__, "Hello, world!\n");
+	KML_BASE_ASM("cli");
 
-	(void) kml_kernel_arch_amd64_gdt_load();
+	if(magic != ULTRA_MAGIC) {
+		kml_base_log_result(
+				__FILE__, KML_BASE_RESULT_ERROR_INVALID_PARAMETER,
+				"kml_kernel_arch_amd64_gdt_load()");
+	}
+
+	enum kml_base_result result = kml_kernel_arch_amd64_gdt_load();
+	if(result) {
+		kml_base_log_result(
+				__FILE__, result, "kml_kernel_arch_amd64_gdt_load()");
+	}
 
 	kml_base_log(__FILE__, "Boot done.\n");
+
+	kml_base_log_result(
+			__FILE__, KML_BASE_RESULT_ERROR_INVALID_CONTROL_PATH,
+			"kml_kernel_arch_amd64_start($P, $I)", boot_context, magic);
 }
