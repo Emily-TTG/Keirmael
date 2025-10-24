@@ -3,7 +3,7 @@
 
 #pragma once
 
-#define KML_BASE_ASM __asm__
+#define KML_BASE_ASM __asm__ volatile
 
 #ifdef _CLANGD
 # define KML_BASE_LINTER
