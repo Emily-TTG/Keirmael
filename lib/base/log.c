@@ -56,7 +56,7 @@ void kml_base_log_result(
 
 	kml_base_log(file, "");
 	kml_base_log_raw_variadic(format, variadic);
-	kml_base_log_raw(": $R", result);
+	kml_base_log_raw(": $R\n", result);
 
 	KML_BASE_VARIADIC_END(variadic);
 }
