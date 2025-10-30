@@ -4,6 +4,9 @@
 HOST_CC = $(CC)
 HOST_AR = $(AR)
 
+HOST_CFLAGS += $(GLOBAL_CFLAGS) $(LOCAL_CFLAGS) $(addprefix -isystem,$(INCLUDES))
+HOST_LDFLAGS += $(GLOBAL_LDFLAGS) $(LOCAL_LDFLAGS)
+
 HOST_CFLAGS += -DKML_HOST=1
 
 define host_library
@@ -11,8 +14,8 @@ define host_library
 endef
 
 define host_executable
-	$(HOST_CC) $(GLOBAL_LDFLAGS) $(HOST_LDFLAGS) $(LOCAL_LDFLAGS) -o $@ $^
+	$(HOST_CC) $(HOST_LDFLAGS) -o $@ $^
 endef
 
 %.host.o: %.c
-	$(HOST_CC) $(GLOBAL_CFLAGS) $(HOST_CFLAGS) $(LOCAL_CFLAGS) -c -o $@ $<
+	$(HOST_CC) $(HOST_CFLAGS) -c -o $@ $<

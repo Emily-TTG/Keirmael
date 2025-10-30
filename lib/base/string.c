@@ -129,11 +129,10 @@ enum kml_base_result kml_base_string_format_callback_variadic(
 			intermediate[digit++] = '0' + (int) (value % 10);
 		} while(value /= 10);
 
-		digit--;
-		do {
-			result = callback(intermediate[digit], passthrough);
+		while(digit) {
+			result = callback(intermediate[--digit], passthrough);
 			if(result) return result;
-		} while(--digit > 0);
+		}
 
 		continue;
 
@@ -155,11 +154,10 @@ enum kml_base_result kml_base_string_format_callback_variadic(
 			intermediate[digit++] = (int) "0123456789ABCDEF"[value % 16];
 		} while(value /= 16);
 
-		digit--;
-		do {
-			result = callback(intermediate[digit], passthrough);
+		while(digit) {
+			result = callback(intermediate[--digit], passthrough);
 			if(result) return result;
-		} while(--digit > 0);
+		}
 	}
 
 	return KML_BASE_RESULT_OK;

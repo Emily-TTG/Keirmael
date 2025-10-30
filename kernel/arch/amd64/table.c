@@ -65,19 +65,26 @@ static struct kml_kernel_arch_amd64_gdt_descriptor kml_global_kernel_arch_amd64_
 	kml_global_kernel_arch_amd64_gdt
 };
 
+static struct kml_kernel_arch_amd64_idt_entry kml_global_kernel_arch_amd64_idt[KML_KERNEL_ARCH_AMD64_IDT_VECTOR_LAST] = {};
+
+static struct kml_kernel_arch_amd64_idt_descriptor kml_global_kernel_arch_amd64_idt_descriptor = {
+	sizeof(kml_global_kernel_arch_amd64_idt) - 1,
+	kml_global_kernel_arch_amd64_idt
+};
+
+static const union kml_kernel_arch_amd64_segment_selector kml_global_kernel_arch_amd64_segment_code_selector = {
+	.privilege = KML_KERNEL_ARCH_AMD64_CPU_PRIVILEGE_RING0,
+	.type = KML_KERNEL_ARCH_AMD64_SEGMENT_SELECTOR_TYPE_GDT,
+	.index = KML_KERNEL_ARCH_AMD64_GDT_INDEX_KERNEL_CODE
+};
+
+static const union kml_kernel_arch_amd64_segment_selector kml_global_kernel_arch_amd64_segment_data_selector = {
+	.privilege = KML_KERNEL_ARCH_AMD64_CPU_PRIVILEGE_RING0,
+	.type = KML_KERNEL_ARCH_AMD64_SEGMENT_SELECTOR_TYPE_GDT,
+	.index = KML_KERNEL_ARCH_AMD64_GDT_INDEX_KERNEL_DATA
+};
+
 enum kml_base_result kml_kernel_arch_amd64_gdt_load(void) {
-	static const union kml_kernel_arch_amd64_segment_selector kernel_code_selector = {
-		.privilege = KML_KERNEL_ARCH_AMD64_CPU_PRIVILEGE_RING0,
-		.type = KML_KERNEL_ARCH_AMD64_SEGMENT_SELECTOR_TYPE_GDT,
-		.index = KML_KERNEL_ARCH_AMD64_GDT_INDEX_KERNEL_CODE
-	};
-
-	static const union kml_kernel_arch_amd64_segment_selector kernel_data_selector = {
-		.privilege = KML_KERNEL_ARCH_AMD64_CPU_PRIVILEGE_RING0,
-		.type = KML_KERNEL_ARCH_AMD64_SEGMENT_SELECTOR_TYPE_GDT,
-		.index = KML_KERNEL_ARCH_AMD64_GDT_INDEX_KERNEL_DATA
-	};
-
 	KML_BASE_ASM("lgdt %[gdtr]" :: [gdtr]"p"(&kml_global_kernel_arch_amd64_gdt_descriptor));
 
 	KML_BASE_ASM(
@@ -93,8 +100,42 @@ enum kml_base_result kml_kernel_arch_amd64_gdt_load(void) {
 		"pushq %%rax\n"
 		"lretq\n"
 		".kml_kernel_arch_amd64_gdt_reload_cs:\n" ::
-		[code_selector]"r"((kml_base_u64_t) kernel_code_selector.raw),
-		[data_selector]"r"(kernel_data_selector.raw) : "rax");
+		[code_selector]"r"((kml_base_u64_t) kml_global_kernel_arch_amd64_segment_code_selector.raw),
+		[data_selector]"r"(kml_global_kernel_arch_amd64_segment_data_selector.raw) : "rax");
+
+	return KML_BASE_RESULT_OK;
+}
+
+extern void kml_kernel_arch_amd64_interrupt_handler_0x0(void);
+extern void kml_kernel_arch_amd64_interrupt_handler_0xFF(void);
+
+enum kml_base_result kml_kernel_arch_amd64_idt_load(void) {
+	// TODO: We can just codegen a prefilled IDT with this logic and a special ISR section at a fixed address
+	//		 instead of this unwieldy nonsense.
+	for(kml_base_size_t i = 0; i < KML_KERNEL_ARCH_AMD64_IDT_VECTOR_LAST; ++i) {
+		enum kml_kernel_arch_amd64_idt_gate_type type;
+
+		if(i <= KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_LAST) {
+			type = KML_KERNEL_ARCH_AMD64_IDT_GATE_TYPE_TRAP;
+		}
+		else type = KML_KERNEL_ARCH_AMD64_IDT_GATE_TYPE_INTERRUPT;
+
+		kml_base_pointer_t offset =
+				(kml_base_pointer_t) kml_kernel_arch_amd64_interrupt_handler_0x0 +
+				i * KML_KERNEL_ARCH_AMD64_INTERRUPT_HANDLER_STRIDE;
+
+		kml_global_kernel_arch_amd64_idt[i] = (struct kml_kernel_arch_amd64_idt_entry) {
+			.offset_low = offset & 0xFFFF, .offset_high = offset >> 16,
+			.selector = kml_global_kernel_arch_amd64_segment_code_selector,
+			// TODO: Populate.
+			.stack_table_entry = 0,
+			.gate_type = type,
+			.privilege = KML_KERNEL_ARCH_AMD64_CPU_PRIVILEGE_RING0,
+			.present = KML_BASE_BOOL_TRUE
+		};
+	}
+
+	KML_BASE_ASM("lidt %[idtr]" :: [idtr]"p"(&kml_global_kernel_arch_amd64_idt_descriptor));
 
 	return KML_BASE_RESULT_OK;
 }

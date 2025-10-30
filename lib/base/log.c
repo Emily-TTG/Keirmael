@@ -44,7 +44,7 @@ void kml_base_log_variadic(
 		const char* file, const char* format, kml_base_variadic_t variadic) {
 
 	kml_base_log_raw("[$S] ", file);
-	kml_base_log_raw(format, variadic);
+	kml_base_log_raw_variadic(format, variadic);
 }
 
 void kml_base_log_result(

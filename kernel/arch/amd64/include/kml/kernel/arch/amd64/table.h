@@ -84,4 +84,58 @@ struct [[gnu::packed]] kml_kernel_arch_amd64_gdt_descriptor {
 	struct kml_kernel_arch_amd64_gdt_entry* offset;
 };
 
+enum [[clang::enum_extensibility(closed)]] kml_kernel_arch_amd64_idt_gate_type {
+	KML_KERNEL_ARCH_AMD64_IDT_GATE_TYPE_INTERRUPT = 0xE,
+	KML_KERNEL_ARCH_AMD64_IDT_GATE_TYPE_TRAP = 0xF
+};
+
+struct [[gnu::packed]] kml_kernel_arch_amd64_idt_entry {
+	kml_base_u16_t offset_low;
+	union kml_kernel_arch_amd64_segment_selector selector;
+	kml_base_u8_t stack_table_entry : 3;
+	kml_base_byte_t reserved0 : 5;
+	enum kml_kernel_arch_amd64_idt_gate_type gate_type : 4;
+	kml_base_byte_t reserved1 : 1;
+	enum kml_kernel_arch_amd64_privilege privilege : 2;
+	enum kml_base_bool present : 1;
+	kml_base_u64_t offset_high : 48;
+	kml_base_u32_t reserved2;
+};
+
+struct [[gnu::packed]] kml_kernel_arch_amd64_idt_descriptor {
+	kml_base_u16_t size;
+	struct kml_kernel_arch_amd64_idt_entry* offset;
+};
+
+enum [[clang::enum_extensibility(open)]] kml_kernel_arch_amd64_idt_vector : kml_base_u64_t {
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_DIVIDE = 0x0,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_DEBUG = 0x1,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_NMI = 0x2,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_BREAKPOINT = 0x3,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_OVERFLOW = 0x4,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_BOUND_RANGE = 0x5,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_INVALID_OPCODE = 0x6,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_DEVICE_NOT_AVAILABLE = 0x7,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_DOUBLE_FAULT = 0x8,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_COPROCESSOR_SEGMENT_OVERRUN = 0x9,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_INVALID_TSS = 0xA,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_SEGMENT_NOT_PRESENT = 0xB,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_STACK_SEGMENT_FAULT = 0xC,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_GENERAL_PROTECTION_FAULT = 0xD,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_PAGE_FAULT = 0xE,
+	// 0xF reserved.
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_x87_FPU_FAULT = 0x10,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_ALIGNMENT_CHECK = 0x11,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_MACHINE_CHECK = 0x12,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_SIMD = 0x13,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_VIRTUALIZATION = 0x14,
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_CONTROL_PROTECTION = 0x15,
+	// 0x15-0x1F reserved.
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_LAST = 0x1F,
+	// 0x20-0xFF external vectors.
+	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_LAST = 0xFF
+};
+
 enum kml_base_result kml_kernel_arch_amd64_gdt_load(void);
+
+enum kml_base_result kml_kernel_arch_amd64_idt_load(void);

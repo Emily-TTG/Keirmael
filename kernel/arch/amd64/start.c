@@ -37,9 +37,22 @@ void kml_kernel_arch_amd64_start(
 				__FILE__, result, "kml_kernel_arch_amd64_gdt_load()");
 	}
 
-	kml_base_log(__FILE__, "Boot done.\n");
+	result = kml_kernel_arch_amd64_idt_load();
+	if(result) {
+		kml_base_log_result(
+				__FILE__, result, "kml_kernel_arch_amd64_idt_load()");
+	}
+
+	KML_BASE_ASM("int3");
+	kml_base_log(__FILE__, "Arch boot done.\n");
 
 	kml_base_log_result(
 			__FILE__, KML_BASE_RESULT_ERROR_INVALID_CONTROL_PATH,
 			"kml_kernel_arch_amd64_start($P, $X)", boot_context, magic);
+
+	volatile enum kml_base_bool halt = KML_BASE_BOOL_TRUE;
+	while(halt) {
+		KML_BASE_ASM("cli");
+		KML_BASE_ASM("hlt");
+	}
 }

@@ -4,6 +4,7 @@
 KERNEL_ARCH_DIRECTORY = kernel/arch/$(TARGET)
 
 KERNEL_SOURCES += $(wildcard $(KERNEL_ARCH_DIRECTORY)/*.c)
+KERNEL_ASM += $(wildcard $(KERNEL_ARCH_DIRECTORY)/*.S)
 
 include $(KERNEL_ARCH_DIRECTORY)/$(TARGET).mk
 

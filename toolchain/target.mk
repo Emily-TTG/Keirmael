@@ -3,7 +3,13 @@
 
 TARGET = amd64
 
+TARGET_CFLAGS = $(GLOBAL_CFLAGS)
+
 include toolchain/target/$(TARGET).mk
+
+TARGET_CFLAGS += $(GLOBAL_CFLAGS) $(LOCAL_CFLAGS) $(addprefix -isystem ,$(INCLUDES))
+TARGET_LDFLAGS += $(GLOBAL_LDFLAGS) $(LOCAL_LDFLAGS)
+TARGET_ASFLAGS += $(TARGET_CFLAGS) $(GLOBAL_ASFLAGS) $(LOCAL_ASFLAGS)
 
 TARGET_CFLAGS += -DKML_TARGET=1
 
@@ -12,8 +18,11 @@ define target_library
 endef
 
 define target_executable
-	$(TARGET_LD) $(GLOBAL_LDFLAGS) $(TARGET_LDFLAGS) $(LOCAL_LDFLAGS) -o $@ $^
+	$(TARGET_LD) $(TARGET_LDFLAGS) -o $@ $^
 endef
 
 %.target.o: %.c
-	$(TARGET_CC) $(GLOBAL_CFLAGS) $(TARGET_CFLAGS) $(LOCAL_CFLAGS) -c -o $@ $<
+	$(TARGET_CC) $(TARGET_CFLAGS) -c -o $@ $<
+
+%.target.o: %.S
+	$(TARGET_CC) $(TARGET_ASFLAGS) -c -o $@ $<
