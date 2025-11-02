@@ -16,11 +16,16 @@ include kernel/kernel.mk
 
 include image/image.mk
 
+include test/lib/base/base.mk
+
 .DEFAULT_GOAL := all
 
 .PHONY: all
-all: kernel/kernel.target.out tool/writer.host.out
+all: kernel/kernel.target.out tool/writer.host.out test/lib/base.host.out
+
+.PHONY: test
+test: test_base
 
 .PHONY: clean
-clean: clean_image clean_kernel clean_base clean_fat clean_writer
+clean: clean_image clean_kernel clean_base clean_fat clean_writer clean_test_base
 

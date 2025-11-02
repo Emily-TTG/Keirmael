@@ -5,7 +5,9 @@
 
 #include <kml/base/environment.h>
 
-#define KML_BASE_BYTE_BIT (8u)
+#define KML_BASE_BYTE_BIT (8U)
+
+#define KML_BASE_LENGTH(array) (sizeof(array) / sizeof(array[0]))
 
 typedef unsigned char kml_base_byte_t;
 
@@ -27,4 +29,5 @@ typedef long long kml_base_s64_t;
 #ifdef KML_BASE_ARCH_64
 typedef kml_base_u64_t kml_base_pointer_t;
 typedef kml_base_u64_t kml_base_size_t;
+typedef kml_base_s64_t kml_base_offset_t;
 #endif

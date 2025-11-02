@@ -11,8 +11,8 @@
  * Per-character callback for string formatting using kml_base_string_format_callback_variadic().
  * \param[in] 0 The next formatted character.
  * \param[in,out] 1 The passthrough parameter given to kml_base_string_format_callback_variadic().
- * \return Any callee-specified error result.
  * \return KML_BASE_RESULT_OK on success.
+ * \return Any callee-specified error result.
  */
 typedef enum kml_base_result kml_base_string_format_callback_t(int, void*);
 
@@ -66,6 +66,7 @@ enum kml_base_result kml_base_string_format_buffer_variadic(
  * | -------------------------- | ----------------------------------------- |
  * | `I`                        | `int`                                     |
  * | `U`                        | `unsigned`                                |
+ * | `Z`                        | `kml_base_size_t`                         |
  * | `R`                        | `enum kml_base_result`                    |
  * | `S`                        | `const char*`                             |
  * | `C`                        | `char`                                    |

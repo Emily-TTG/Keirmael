@@ -4,6 +4,7 @@
 #include <kml/base/environment.h>
 #include <kml/base/type.h>
 #include <kml/base/string.h>
+#include <kml/base/result.h>
 
 enum kml_base_result kml_base_string_format_buffer(
 		char* out, const char* format, ...) {
@@ -85,7 +86,12 @@ enum kml_base_result kml_base_string_format_callback_variadic(
 			}
 
 			case 'U': {
-				value = KML_BASE_VARIADIC_GET(variadic, int);
+				value = KML_BASE_VARIADIC_GET(variadic, unsigned);
+				goto format_unsigned;
+			}
+
+			case 'Z': {
+				value = KML_BASE_VARIADIC_GET(variadic, kml_base_size_t);
 				goto format_unsigned;
 			}
 
