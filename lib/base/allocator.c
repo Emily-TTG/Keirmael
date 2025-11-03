@@ -7,7 +7,7 @@
 #include <kml/base/result.h>
 
 enum kml_base_result kml_base_allocator_region_new(
-		struct kml_base_allocator_region* head, void* new, kml_base_size_t size,
+		struct kml_base_allocator_region* head, kml_base_byte_t* new, kml_base_size_t size,
 		kml_base_size_t block_size) {
 
 	if(size < sizeof(struct kml_base_allocator_region)) {
@@ -18,7 +18,7 @@ enum kml_base_result kml_base_allocator_region_new(
 		return KML_BASE_RESULT_ERROR_OUT_OF_RANGE;
 	}
 
-	struct kml_base_allocator_region* new_region = new;
+	struct kml_base_allocator_region* new_region = (struct kml_base_allocator_region*) new;
 	new_region->free = 0;
 	new_region->total = 0;
 	new_region->next = 0;
@@ -28,7 +28,7 @@ enum kml_base_result kml_base_allocator_region_new(
 		new_region->block_size = head->block_size;
 
 		while(head->next) head = head->next;
-		head->next = new;
+		head->next = new_region;
 	}
 	else new_region->block_size = block_size;
 
@@ -50,6 +50,31 @@ enum kml_base_result kml_base_allocator_region_new(
 	return new_region->total < 1 ? KML_BASE_RESULT_ERROR_BUFFER_TOO_SMALL : KML_BASE_RESULT_OK;
 }
 
+void kml_base_allocator_region_get_statistics(
+		struct kml_base_allocator_region* head, struct kml_base_allocator_statistics* out) {
+
+	*out = (struct kml_base_allocator_statistics) {};
+
+	out->block_size = head->block_size;
+
+	do {
+		out->free += head->free;
+		out->total += head->total;
+
+		if(out->max_contiguous_free < head->free) {
+			kml_base_size_t contiguous = 0;
+
+			for(kml_base_size_t i = 0; i < head->total; ++i) {
+				if(!kml_base_bitset_get(head->data, i)) {
+					if(++contiguous > out->max_contiguous_free) {
+						out->max_contiguous_free = contiguous;
+					}
+				}
+				else contiguous = 0;
+			}
+		}
+	} while((head = head->next));
+}
 
 enum kml_base_result kml_base_allocator_allocation_new(
 		struct kml_base_allocator_region* head, struct kml_base_allocator_allocation* out,

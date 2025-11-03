@@ -2,6 +2,7 @@
 // Copyright (C) 2025 Emily "TTG" Banerjee <prs.ttg+kml@pm.me>
 
 #include <kml/base/log.h>
+#include <kml/base/type.h>
 
 #include <kml/kernel/arch/amd64/table.h>
 

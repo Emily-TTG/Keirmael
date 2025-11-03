@@ -13,4 +13,4 @@ else
 	GLOBAL_CFLAGS += -DNDEBUG
 endif
 
-GLOBAL_CFLAGS += $(CFLAGS)
+GLOBAL_CFLAGS += -fno-strict-aliasing $(CFLAGS)

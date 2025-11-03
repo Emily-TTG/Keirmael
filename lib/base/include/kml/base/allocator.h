@@ -22,6 +22,13 @@ struct kml_base_allocator_allocation {
 	kml_base_size_t index; /// The index of the first allocated block. Blocks are indexed in reverse order from the end of the structure.
 };
 
+struct kml_base_allocator_statistics {
+	kml_base_size_t block_size;
+	kml_base_size_t total; /// The total number of blocks.
+	kml_base_size_t free; /// The number of free blocks.
+	kml_base_size_t max_contiguous_free; /// The largest contiguous block of free blocks.
+};
+
 /**
  * Adds a new free memory region to an allocator region list. Will zero out
  * portions of the acquired region as-necessary.
@@ -40,7 +47,15 @@ struct kml_base_allocator_allocation {
  * \return KML_BASE_RESULT_ERROR_OUT_OF_RANGE if the block size is 0.
  */
 enum kml_base_result kml_base_allocator_region_new(
-		struct kml_base_allocator_region*, void*, kml_base_size_t, kml_base_size_t);
+		struct kml_base_allocator_region*, kml_base_byte_t*, kml_base_size_t, kml_base_size_t);
+
+/**
+ * Collects statistics from all regions in an allocator region list.
+ * \param[in] 0 The head of the allocator region list to inspect.
+ * \param[out] 1 A pointer to output storage for the statistics.
+ */
+void kml_base_allocator_region_get_statistics(
+		struct kml_base_allocator_region*, struct kml_base_allocator_statistics*);
 
 /**
  * Allocates a contiguous set of blocks from a region in an allocator region list.

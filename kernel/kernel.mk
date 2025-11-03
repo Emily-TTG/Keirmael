@@ -1,9 +1,7 @@
 # SPDX-Licence-Identifier: X11
 # Copyright (C) 2025 Emily "TTG" Banerjee <prs.ttg+kml@pm.me>
 
-include kernel/vendor/hyper.mk
-
-KERNEL_INCLUDES = $(HYPER_DIRECTORY)/loader/boot_protocol/ultra_protocol
+KERNEL_INCLUDES += kernel/include kernel/arch/include
 KERNEL_INCLUDES += lib/base/include lib/fat/include
 
 include kernel/arch/arch.mk

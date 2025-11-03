@@ -25,6 +25,10 @@ typedef __builtin_va_list kml_base_variadic_t;
 #  define KML_BASE_VARIADIC_GET(variadic, type) \
 		__builtin_va_arg(variadic, type)
 # endif
+
+# if __has_builtin(__builtin_unreachable)
+#  define KML_BASE_UNREACHABLE __builtin_unreachable
+# endif
 #endif
 
 #ifdef __amd64__

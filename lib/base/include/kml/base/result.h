@@ -27,7 +27,9 @@ enum [[clang::enum_extensibility(closed)]] [[nodiscard]] kml_base_result {
 	/// A unit testing run failed.
 	KML_BASE_RESULT_ERROR_UNIT_TEST_FAILED,
 	/// A provided parameter was out of expected range.
-	KML_BASE_RESULT_ERROR_OUT_OF_RANGE
+	KML_BASE_RESULT_ERROR_OUT_OF_RANGE,
+	/// An attempted operation is not implemented.
+	KML_BASE_RESULT_ERROR_NOT_IMPLEMENTED
 };
 
 const char* kml_base_result_name(enum kml_base_result);
