@@ -4,3 +4,7 @@
 #pragma once
 
 #define KML_KERNEL_ARCH_AMD64_INTERRUPT_HANDLER_STRIDE 128
+
+// Byte size of the register block saved by kml_kernel_arch_amd64_push_all (15
+// 8-byte registers). Used to locate the iretq frame from RSP after push_all.
+#define KML_KERNEL_ARCH_AMD64_INTERRUPT_PUSH_ALL_SIZE 120
