@@ -25,12 +25,12 @@ struct kml_base_string_format_variadic_callback_output {
 };
 
 static enum kml_base_result kml_base_string_format_buffer_callback(
-		int character, void* passthrough) {
+		const int character, void* passthrough) {
 
-	const struct kml_base_string_format_variadic_callback_output* output =
+	struct kml_base_string_format_variadic_callback_output* output =
 			passthrough;
 
-	output->buffer[output->offset] = (char) character;
+	output->buffer[output->offset++] = (char) character;
 
 	return KML_BASE_RESULT_OK;
 }
