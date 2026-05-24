@@ -66,7 +66,7 @@ static struct kml_kernel_arch_amd64_gdt_descriptor kml_global_kernel_arch_amd64_
 	kml_global_kernel_arch_amd64_gdt
 };
 
-static struct kml_kernel_arch_amd64_idt_entry kml_global_kernel_arch_amd64_idt[KML_KERNEL_ARCH_AMD64_IDT_VECTOR_LAST] = {};
+static struct kml_kernel_arch_amd64_idt_entry kml_global_kernel_arch_amd64_idt[KML_KERNEL_ARCH_AMD64_IDT_VECTOR_LAST + 1] = {};
 
 static struct kml_kernel_arch_amd64_idt_descriptor kml_global_kernel_arch_amd64_idt_descriptor = {
 	sizeof(kml_global_kernel_arch_amd64_idt) - 1,
@@ -112,7 +112,7 @@ extern void kml_kernel_arch_amd64_interrupt_handler_0x0(void);
 enum kml_base_result kml_kernel_arch_amd64_idt_load(void) {
 	// TODO: We can just codegen a prefilled IDT with this logic and a special ISR section at a fixed address
 	//		 instead of this unwieldy nonsense.
-	for(kml_base_size_t i = 0; i < KML_KERNEL_ARCH_AMD64_IDT_VECTOR_LAST; ++i) {
+	for(kml_base_size_t i = 0; i < KML_BASE_LENGTH(kml_global_kernel_arch_amd64_idt); ++i) {
 		enum kml_kernel_arch_amd64_idt_gate_type type;
 
 		if(i <= KML_KERNEL_ARCH_AMD64_IDT_VECTOR_EXCEPTION_LAST) {
