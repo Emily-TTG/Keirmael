@@ -52,9 +52,9 @@
 	.global kml_kernel_arch_amd64_interrupt_handler_\vector
 	kml_kernel_arch_amd64_interrupt_handler_\vector:
 		cld
-		movq $\vector, %rdi
-		movq %rsp, %rsi
 		kml_kernel_arch_amd64_push_all
+		movq $\vector, %rdi
+		leaq KML_KERNEL_ARCH_AMD64_INTERRUPT_PUSH_ALL_SIZE(%rsp), %rsi
 		callq kml_kernel_arch_amd64_interrupt_service_routine
 		kml_kernel_arch_amd64_pop_all
 		addq $0x8, %rsp
@@ -66,10 +66,10 @@
 	.global kml_kernel_arch_amd64_interrupt_handler_\vector
 	kml_kernel_arch_amd64_interrupt_handler_\vector:
 		cld
-		pushq 0
-		movq $\vector, %rdi
-		movq %rsp, %rsi
+		pushq $0
 		kml_kernel_arch_amd64_push_all
+		movq $\vector, %rdi
+		leaq KML_KERNEL_ARCH_AMD64_INTERRUPT_PUSH_ALL_SIZE(%rsp), %rsi
 		callq kml_kernel_arch_amd64_interrupt_service_routine
 		kml_kernel_arch_amd64_pop_all
 		addq $0x8, %rsp
@@ -98,6 +98,18 @@ kml_kernel_arch_amd64_interrupt_handler 0x12
 kml_kernel_arch_amd64_interrupt_handler 0x13
 kml_kernel_arch_amd64_interrupt_handler 0x14
 kml_kernel_arch_amd64_interrupt_handler_error_code 0x15
+
+# Reserved but we may as well emit something anyway.
+kml_kernel_arch_amd64_interrupt_handler 0x16
+kml_kernel_arch_amd64_interrupt_handler 0x17
+kml_kernel_arch_amd64_interrupt_handler 0x18
+kml_kernel_arch_amd64_interrupt_handler 0x19
+kml_kernel_arch_amd64_interrupt_handler 0x1A
+kml_kernel_arch_amd64_interrupt_handler 0x1B
+kml_kernel_arch_amd64_interrupt_handler 0x1C
+kml_kernel_arch_amd64_interrupt_handler 0x1D
+kml_kernel_arch_amd64_interrupt_handler 0x1E
+kml_kernel_arch_amd64_interrupt_handler 0x1F
 
 kml_kernel_arch_amd64_interrupt_handler 0x20
 kml_kernel_arch_amd64_interrupt_handler 0x21
