@@ -26,8 +26,11 @@ typedef __builtin_va_list kml_base_variadic_t;
 		__builtin_va_arg(variadic, type)
 # endif
 
-# if __has_builtin(__builtin_unreachable)
+# if __has_builtin(__builtin_unreachable) || defined(KML_BASE_LINTER)
 #  define KML_BASE_UNREACHABLE __builtin_unreachable
+# endif
+# if __has_builtin(__builtin_popcount) || defined(KML_BASE_LINTER)
+#  define KML_BASE_POPCOUNT __builtin_popcount
 # endif
 #endif
 

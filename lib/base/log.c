@@ -5,11 +5,7 @@
 #include <kml/base/string.h>
 #include <kml/base/environment.h>
 
-static enum kml_base_result kml_base_log_format_callback(
-		int character, void* passthrough) {
-
-	(void) passthrough;
-
+static enum kml_base_result kml_base_log_format_callback(int character, void*) {
 	return kml_base_log_character(character);
 }
 

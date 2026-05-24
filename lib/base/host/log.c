@@ -8,9 +8,9 @@
 #include <string.h>
 #include <errno.h>
 
-enum kml_base_result kml_base_log_character(int character) {
-	int result = putchar(character);
-	if(result < 0) perror("putchar");
+enum kml_base_result kml_base_log_character(const int character) {
+	const int result = putchar(character);
+	if(result < 0) [[clang::unlikely]] perror("putchar");
 
 	return KML_BASE_RESULT_OK;
 }

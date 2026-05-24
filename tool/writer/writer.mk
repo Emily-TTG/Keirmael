@@ -3,7 +3,7 @@
 
 WRITER_SOURCES = $(wildcard tool/writer/*.c)
 
-tool/writer.%.out: INCLUDES = lib/fat/include lib/base/include
+tool/writer.%.out: INCLUDES += lib/fat/include lib/base/include
 tool/writer.%.out: $(WRITER_SOURCES:.c=.%.o) lib/libfat.%.a lib/libbase.%.a
 	${$*_executable}
 

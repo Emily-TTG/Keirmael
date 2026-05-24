@@ -56,7 +56,7 @@ enum kml_base_result kml_base_string_format_callback_variadic(
 
 		if(character != '$') {
 			result = callback(character, passthrough);
-			if(result) return result;
+			if(result) [[clang::unlikely]] return result;
 
 			continue;
 		}
@@ -75,7 +75,7 @@ enum kml_base_result kml_base_string_format_callback_variadic(
 				char format_character = KML_BASE_VARIADIC_GET(variadic, int);
 
 				result = callback(format_character, passthrough);
-				if(result) return result;
+				if(result) [[clang::unlikely]] return result;
 
 				break;
 			}
@@ -125,7 +125,7 @@ enum kml_base_result kml_base_string_format_callback_variadic(
 	format_signed:
 		if(signed_value < 0) {
 			result = callback('-', passthrough);
-			if(result) return result;
+			if(result) [[clang::unlikely]] return result;
 		}
 
 		value = signed_value < 0 ? -signed_value : signed_value;
@@ -137,7 +137,7 @@ enum kml_base_result kml_base_string_format_callback_variadic(
 
 		while(digit) {
 			result = callback(intermediate[--digit], passthrough);
-			if(result) return result;
+			if(result) [[clang::unlikely]] return result;
 		}
 
 		continue;
@@ -145,16 +145,16 @@ enum kml_base_result kml_base_string_format_callback_variadic(
 	format_string:
 		for(; *string; ++string) {
 			result = callback(*string, passthrough);
-			if(result) return result;
+			if(result) [[clang::unlikely]] return result;
 		}
 
 		continue;
 
 	format_hex:
 		result = callback('0', passthrough);
-		if(result) return result;
+		if(result) [[clang::unlikely]] return result;
 		result = callback('x', passthrough);
-		if(result) return result;
+		if(result) [[clang::unlikely]] return result;
 
 		do {
 			intermediate[digit++] = (int) "0123456789ABCDEF"[value % 16];
@@ -162,7 +162,7 @@ enum kml_base_result kml_base_string_format_callback_variadic(
 
 		while(digit) {
 			result = callback(intermediate[--digit], passthrough);
-			if(result) return result;
+			if(result) [[clang::unlikely]] return result;
 		}
 	}
 

@@ -10,11 +10,11 @@ enum kml_base_result kml_base_allocator_region_new(
 		struct kml_base_allocator_region* head, kml_base_byte_t* new, kml_base_size_t size,
 		kml_base_size_t block_size) {
 
-	if(size < sizeof(struct kml_base_allocator_region)) {
+	if(size < sizeof(struct kml_base_allocator_region)) [[clang::unlikely]] {
 		return KML_BASE_RESULT_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	if((head && head->block_size == 0) || block_size == 0) {
+	if((head && head->block_size == 0) || block_size == 0) [[clang::unlikely]] {
 		return KML_BASE_RESULT_ERROR_OUT_OF_RANGE;
 	}
 
@@ -34,7 +34,8 @@ enum kml_base_result kml_base_allocator_region_new(
 
 	kml_base_size_t start = sizeof(struct kml_base_allocator_region);
 	kml_base_size_t bit = 0;
-	kml_base_size_t end = size;
+	new_region->tail = size % new_region->block_size;
+	kml_base_size_t end = size - new_region->tail;
 
 	while(start < end - new_region->block_size) {
 		kml_base_bitset_set(new_region->data, bit++, KML_BASE_BOOL_FALSE);
@@ -76,6 +77,12 @@ void kml_base_allocator_region_get_statistics(
 	} while((head = head->next));
 }
 
+static kml_base_byte_t* kml_base_allocator_region_get_block(
+		struct kml_base_allocator_region* region, kml_base_size_t index) {
+
+	return region->data + (region->size - sizeof(struct kml_base_allocator_region)) - ((region->block_size * (index + 1)) + region->tail);
+}
+
 enum kml_base_result kml_base_allocator_allocation_new(
 		struct kml_base_allocator_region* head, struct kml_base_allocator_allocation* out,
 		kml_base_size_t count) {
@@ -94,8 +101,9 @@ enum kml_base_result kml_base_allocator_allocation_new(
 					for(kml_base_size_t i = 0; i < count; ++i) {
 						kml_base_bitset_set(out->region->data, out->index - i, KML_BASE_BOOL_TRUE);
 					}
+
 					out->region->free -= count;
-					out->buffer = out->region->data + (out->region->size - sizeof(struct kml_base_allocator_region)) - (out->region->block_size * (out->index + 1));
+					out->buffer = kml_base_allocator_region_get_block(out->region, out->index);
 
 					return KML_BASE_RESULT_OK;
 				}
@@ -123,7 +131,7 @@ enum kml_base_result kml_base_allocator_block_new(
 	struct kml_base_allocator_allocation allocation = {};
 
 	enum kml_base_result result = kml_base_allocator_allocation_new(head, &allocation, 1);
-	if(!result) *out = allocation.buffer;
+	if(!result) [[clang::likely]] *out = allocation.buffer;
 
 	return result;
 }
@@ -132,11 +140,16 @@ enum kml_base_result kml_base_allocator_block_delete(
 		struct kml_base_allocator_region* head, kml_base_byte_t* block) {
 
 	do {
-		kml_base_byte_t* last = head->data + (head->size - sizeof(struct kml_base_allocator_region));
-		kml_base_byte_t* first = last - (head->block_size * (head->total + 1));
+		kml_base_byte_t* last = kml_base_allocator_region_get_block(head, 0);
+		kml_base_byte_t* first = kml_base_allocator_region_get_block(head, head->total - 1);
 
 		if(block >= first && block <= last) {
 			kml_base_size_t index = (block - first) / head->block_size;
+
+			if(!kml_base_bitset_get(head->data, index)) [[clang::unlikely]] {
+				return KML_BASE_RESULT_ERROR_PARAMETER_LIFETIME_OVER;
+			}
+
 			kml_base_bitset_set(head->data, index, KML_BASE_BOOL_FALSE);
 
 			return KML_BASE_RESULT_OK;

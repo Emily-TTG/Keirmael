@@ -136,7 +136,7 @@ enum [[clang::enum_extensibility(open)]] kml_kernel_arch_amd64_idt_vector : kml_
 	KML_KERNEL_ARCH_AMD64_IDT_VECTOR_LAST = 0xFF
 };
 
-struct [[gnu::packed]] KML_KERNEL_PAGE_table_entry {
+struct [[gnu::packed]] kml_kernel_arch_amd64_page_table_entry {
 	enum kml_base_bool present : 1;
 	enum kml_base_bool writeable : 1;
 	enum kml_base_bool user : 1;
@@ -144,10 +144,10 @@ struct [[gnu::packed]] KML_KERNEL_PAGE_table_entry {
 	enum kml_base_bool disable_cache : 1;
 	enum kml_base_bool accessed : 1;
 	enum kml_base_bool dirty : 1; // Free if directory.
-	enum kml_base_bool large_pat : 1; // 1GiB page @ PML3, 4MiB page @ PML2, use PAT @ PML1.
+	enum kml_base_bool large_pat : 1; // 1GiB page @ PML3, 2MiB page @ PML2, use PAT @ PML1.
 	enum kml_base_bool global : 1; // Free if directory
 	kml_base_u8_t free0 : 3;
-	kml_base_pointer_t physical : 40;
+	kml_base_pointer_t address : 40;
 	kml_base_u16_t free1 : 7;
 	kml_base_u16_t protection_key : 4; // Free if directory.
 	enum kml_base_bool disable_execute : 1;

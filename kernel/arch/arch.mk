@@ -8,13 +8,8 @@ KERNEL_ASM += $(wildcard $(KERNEL_ARCH_DIRECTORY)/*.S)
 
 include $(KERNEL_ARCH_DIRECTORY)/$(TARGET).mk
 
-KERNEL_LDFLAGS += -T $(KERNEL_LDSCRIPT)
+include kernel/arch/host/host.mk
 
 ifeq ($(TARGET),amd64)
-	KERNEL_SOURCES += $(wildcard kernel/arch/ultra/*.c)
-
-	include kernel/vendor/hyper.mk
-	KERNEL_INCLUDES += $(HYPER_DIRECTORY)/loader/boot_protocol/ultra_protocol
-
 	include kernel/arch/ultra/ultra.mk
 endif

@@ -148,7 +148,7 @@ enum kml_base_result kml_base_main(void) {
 				kml_base_log_result(
 					__FILE__, result, "\t\tkml_test_base_allocator_test_block($P, $Z)", allocated_block, head->block_size);
 
-				if(result) {
+				if(result) [[clang::unlikely]] {
 					kml_base_log_result(
 						__FILE__, KML_BASE_RESULT_ERROR_UNIT_TEST_FAILED,
 						"\t\t\tkml_test_base_allocator_test_block($P, $Z) != $R", allocated_block, head->block_size, KML_BASE_RESULT_OK);
@@ -168,7 +168,7 @@ enum kml_base_result kml_base_main(void) {
 				kml_base_log_result(
 					__FILE__, result, "\t\tkml_test_base_allocator_test_allocation($P<$Z>)", &allocations[j], j);
 
-				if(result) {
+				if(result) [[clang::unlikely]] {
 					kml_base_log_result(
 						__FILE__, KML_BASE_RESULT_ERROR_UNIT_TEST_FAILED,
 						"\t\t\tkml_test_base_allocator_test_allocation($P<$Z>) != $R", &allocations[j], j, KML_BASE_RESULT_OK);
@@ -203,7 +203,7 @@ enum kml_base_result kml_base_main(void) {
 				kml_base_log_result(
 					__FILE__, result, "\t\tkml_test_base_allocator_test_allocation($P<$Z>)", &allocations[j], j);
 
-				if(result) {
+				if(result) [[clang::unlikely]] {
 					kml_base_log_result(
 						__FILE__, KML_BASE_RESULT_ERROR_UNIT_TEST_FAILED,
 						"\t\tkml_test_base_allocator_test_allocation($P<$Z>) != $R", j, &allocations[j], j, KML_BASE_RESULT_OK);

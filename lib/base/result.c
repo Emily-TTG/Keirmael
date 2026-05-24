@@ -17,6 +17,9 @@ const char* kml_base_result_name(enum kml_base_result result) {
 		case KML_BASE_RESULT_ERROR_UNIT_TEST_FAILED: return "unit test failed";
 		case KML_BASE_RESULT_ERROR_OUT_OF_RANGE: return "out of range";
 		case KML_BASE_RESULT_ERROR_NOT_IMPLEMENTED: return "not implemented";
+		case KML_BASE_RESULT_ERROR_PARAMETER_LIFETIME_OVER: return "out of lifetime";
+		case KML_BASE_RESULT_ERROR_VALUE_ALREADY_SET: return "value already set";
+		case KML_BASE_RESULT_ERROR_PARAMETER_NOT_ALIGNED: return "not aligned";
 	}
 
 	return "<INVALID RESULT VALUE>";

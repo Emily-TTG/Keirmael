@@ -8,7 +8,7 @@ TARGET_CFLAGS = $(GLOBAL_CFLAGS)
 include toolchain/target/$(TARGET).mk
 
 TARGET_CFLAGS += $(GLOBAL_CFLAGS) $(LOCAL_CFLAGS) $(addprefix -isystem ,$(INCLUDES))
-TARGET_LDFLAGS += $(GLOBAL_LDFLAGS) $(LOCAL_LDFLAGS)
+TARGET_LDFLAGS += $(GLOBAL_LDFLAGS) $(LOCAL_LDFLAGS) $(addprefix -T ,$(LDSCRIPT))
 TARGET_ASFLAGS += $(TARGET_CFLAGS) $(GLOBAL_ASFLAGS) $(LOCAL_ASFLAGS)
 
 TARGET_CFLAGS += -DKML_TARGET=1
@@ -18,7 +18,7 @@ define target_library
 endef
 
 define target_executable
-	$(TARGET_LD) $(TARGET_LDFLAGS) -o $@ $^
+	$(TARGET_LD) $(TARGET_LDFLAGS) -o $@ $(filter-out %.a,$^) $(filter %.a,$^)
 endef
 
 %.target.o: %.c

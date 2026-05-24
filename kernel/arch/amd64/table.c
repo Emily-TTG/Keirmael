@@ -4,6 +4,7 @@
 #include <kml/base/environment.h>
 
 #include <kml/kernel/arch/amd64/table.h>
+#include <kml/kernel/arch/amd64/interrupt.h>
 
 enum [[clang::enum_extensibility(closed)]] kml_kernel_arch_amd64_gdt_index {
 	KML_KERNEL_ARCH_AMD64_GDT_INDEX_NULL,
@@ -107,7 +108,6 @@ enum kml_base_result kml_kernel_arch_amd64_gdt_load(void) {
 }
 
 extern void kml_kernel_arch_amd64_interrupt_handler_0x0(void);
-extern void kml_kernel_arch_amd64_interrupt_handler_0xFF(void);
 
 enum kml_base_result kml_kernel_arch_amd64_idt_load(void) {
 	// TODO: We can just codegen a prefilled IDT with this logic and a special ISR section at a fixed address

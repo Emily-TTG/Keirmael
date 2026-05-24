@@ -1,6 +1,8 @@
 # SPDX-Licence-Identifier: X11
 # Copyright (C) 2025 Emily "TTG" Banerjee <prs.ttg+kml@pm.me>
 
+#include <kml/kernel/arch/amd64/interrupt.h>
+
 .extern kml_kernel_arch_amd64_interrupt_service_routine
 
 .macro kml_kernel_arch_amd64_push_all

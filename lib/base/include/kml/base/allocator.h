@@ -10,6 +10,7 @@ struct kml_base_allocator_region {
 	struct kml_base_allocator_region* next;
 	kml_base_size_t size; /// The size of the region in bytes, includes this structure.
 	kml_base_size_t block_size;
+	kml_base_size_t tail; /// The number of unused bytes at the end of the region used to align the blocks to the blocksize.
 	kml_base_size_t total; /// The total number of blocks in this region.
 	kml_base_size_t free; /// The number of free blocks in this region.
 	kml_base_byte_t data[];
@@ -94,6 +95,8 @@ enum kml_base_result kml_base_allocator_block_new(
  * \return KML_BASE_RESULT_OK on success.
  * \return KML_BASE_RESULT_ERROR_OUT_OF_RANGE if the allocated block could not be
  * found in the allocator region list.
+ * \return KML_BASE_RESULT_ERROR_PARAMETER_LIFETIME_OVER if the allocated block has
+ * already been deleted.
  */
 enum kml_base_result kml_base_allocator_block_delete(
 		struct kml_base_allocator_region*, kml_base_byte_t*);

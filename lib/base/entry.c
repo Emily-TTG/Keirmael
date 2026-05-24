@@ -9,7 +9,7 @@ enum kml_base_result kml_base_main(void);
 #ifdef KML_HOST
 int main(void) {
 	enum kml_base_result result = kml_base_main();
-	if(result) {
+	if(result) [[clang::unlikely]] {
 		kml_base_log_result(__FILE__, result, "kml_base_main()");
 		return 1;
 	}

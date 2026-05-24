@@ -3,7 +3,7 @@
 
 TEST_BASE_SOURCES = $(wildcard test/lib/base/*.c)
 
-test/lib/base.%.out: INCLUDES = lib/base/include
+test/lib/base.%.out: INCLUDES += lib/base/include
 test/lib/base.%.out: $(TEST_BASE_SOURCES:.c=.%.o) lib/libbase.%.a
 	${$*_executable}
 

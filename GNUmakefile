@@ -21,7 +21,7 @@ include test/lib/base/base.mk
 .DEFAULT_GOAL := all
 
 .PHONY: all
-all: kernel/kernel.target.out tool/writer.host.out test/lib/base.host.out
+all: kernel/kernel.target.out kernel/kernel.host.out tool/writer.host.out test/lib/base.host.out
 
 .PHONY: test
 test: test_base

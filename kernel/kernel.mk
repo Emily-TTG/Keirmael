@@ -4,17 +4,20 @@
 KERNEL_INCLUDES += kernel/include kernel/arch/include
 KERNEL_INCLUDES += lib/base/include lib/fat/include
 
+KERNEL_SOURCES += $(wildcard kernel/*.c)
+
 include kernel/arch/arch.mk
 
-kernel/kernel.%.out: INCLUDES = $(KERNEL_INCLUDES)
-kernel/kernel.%.out: LOCAL_CFLAGS = $(KERNEL_CFLAGS)
-kernel/kernel.%.out: LOCAL_LDFLAGS = $(KERNEL_LDFLAGS)
-kernel/kernel.%.out: LOCAL_ASFLAGS = $(KERNEL_ASFLAGS)
-kernel/kernel.%.out: $(KERNEL_SOURCES:.c=.%.o) $(KERNEL_ASM:.S=.%.o) $(KERNEL_LDSCRIPT) lib/libfat.%.a lib/libbase.%.a
+kernel/kernel.%.out: INCLUDES += $(KERNEL_INCLUDES)
+kernel/kernel.%.out: LDSCRIPT = $(KERNEL_LDSCRIPT)
+kernel/kernel.%.out: LOCAL_CFLAGS += $(KERNEL_CFLAGS)
+kernel/kernel.%.out: LOCAL_LDFLAGS += $(KERNEL_LDFLAGS)
+kernel/kernel.%.out: LOCAL_ASFLAGS += $(KERNEL_ASFLAGS)
+kernel/kernel.%.out: $(KERNEL_SOURCES:.c=.%.o) $(KERNEL_ASM:.S=.%.o) lib/libfat.%.a lib/libbase.%.a
 	${$*_executable}
 
 .PHONY: clean_kernel
-clean_kernel: clean_hyper
+clean_kernel: clean_hyper clean_kernel_host
 	rm -f $(KERNEL_SOURCES:.c=.host.o)
 	rm -f kernel/kernel.host.out
 

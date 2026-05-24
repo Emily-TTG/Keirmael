@@ -12,36 +12,69 @@
 // TODO: Once we have more formal kernel terminal drivers -- this can be
 //		 banished to `lib/base/target` to call through those interfaces rather
 //		 than this janky debug solution.
+#if __STDC_HOSTED__ != 1
 enum kml_base_result kml_base_log_character(int character) {
 	KML_BASE_ASM("outb %[data], $0xE9" :: [data]"a"((char) character));
 
 	return KML_BASE_RESULT_OK;
 }
+#endif
 
 void kml_kernel_arch_start(void* boot_data) {
 	enum kml_base_result result = kml_kernel_arch_amd64_gdt_load();
-	if(result) {
+	if(result) [[clang::unlikely]] {
 		kml_base_log_result(
 				__FILE__, result, "kml_kernel_arch_amd64_gdt_load()");
 	}
 
 	result = kml_kernel_arch_amd64_idt_load();
-	if(result) {
+	if(result) [[clang::unlikely]] {
 		kml_base_log_result(
 				__FILE__, result, "kml_kernel_arch_amd64_idt_load()");
 	}
 
 	struct kml_base_allocator_region* allocator;
-	result = kml_kernel_arch_process_boot_data(boot_data, &allocator);
-	if(result) {
+	result = kml_kernel_arch_boot_populate_allocator(boot_data, &allocator);
+	if(result) [[clang::unlikely]] {
 		kml_base_log_result(
-				__FILE__, result, "kml_kernel_arch_process_boot_data($P, $P)",
+				__FILE__, result, "kml_kernel_arch_boot_populate_allocator($P, $P)",
 				boot_data, &allocator);
+	}
+
+	kml_kernel_memory_mapping_context_t mapping_context;
+	result = kml_kernel_memory_mapping_context_new(allocator, &mapping_context);
+	if(result) [[clang::unlikely]] {
+		kml_base_log_result(
+				__FILE__, result, "kml_kernel_memory_mapping_context_new($P, $P)",
+				allocator, &mapping_context);
+
+		goto terminate;
+	}
+
+	result = kml_kernel_arch_boot_map_default(boot_data, allocator, mapping_context);
+	if(result) [[clang::unlikely]] {
+		kml_base_log_result(
+				__FILE__, result, "kml_kernel_arch_boot_map_default($P, $P, $P)",
+				boot_data, allocator, mapping_context);
+
+		goto terminate;
+	}
+
+	result = kml_kernel_memory_mapping_context_load(mapping_context);
+	if(result) [[clang::unlikely]] {
+		kml_base_log_result(
+				__FILE__, result, "kml_kernel_memory_mapping_context_load($P)",
+				mapping_context);
+
+		goto terminate;
 	}
 
 	kml_base_log_result(
 			__FILE__, KML_BASE_RESULT_ERROR_INVALID_CONTROL_PATH,
 			"kml_kernel_arch_amd64_start($P)", boot_data);
+
+terminate:
+	kml_base_log(__FILE__, "The kernel has encountered a fatal error and cannot continue\n");
 
 	volatile enum kml_base_bool halt = KML_BASE_BOOL_TRUE;
 	while(halt) {

@@ -29,7 +29,13 @@ enum [[clang::enum_extensibility(closed)]] [[nodiscard]] kml_base_result {
 	/// A provided parameter was out of expected range.
 	KML_BASE_RESULT_ERROR_OUT_OF_RANGE,
 	/// An attempted operation is not implemented.
-	KML_BASE_RESULT_ERROR_NOT_IMPLEMENTED
+	KML_BASE_RESULT_ERROR_NOT_IMPLEMENTED,
+	/// A provided parameter's lifetime had ended.
+	KML_BASE_RESULT_ERROR_PARAMETER_LIFETIME_OVER,
+	/// An attempted operation would overwrite an existing value.
+	KML_BASE_RESULT_ERROR_VALUE_ALREADY_SET,
+	/// A provided parameter was not aligned.
+	KML_BASE_RESULT_ERROR_PARAMETER_NOT_ALIGNED
 };
 
 const char* kml_base_result_name(enum kml_base_result);

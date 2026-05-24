@@ -1,6 +1,8 @@
 # SPDX-Licence-Identifier: X11
 # Copyright (C) 2025 Emily "TTG" Banerjee <prs.ttg+kml@pm.me>
 
+ENTRY(kml_kernel_arch_ultra_start)
+
 SECTIONS
 {
 	. = 0xffffffff80000000;

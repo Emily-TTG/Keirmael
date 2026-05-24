@@ -3,7 +3,7 @@
 
 FAT_SOURCES = $(wildcard lib/fat/*.c)
 
-lib/libfat.%.a: INCLUDES = lib/fat/include lib/base/include
+lib/libfat.%.a: INCLUDES += lib/fat/include lib/base/include
 lib/libfat.%.a: $(FAT_SOURCES:.c=.%.o)
 	${$*_library}
 

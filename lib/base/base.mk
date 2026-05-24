@@ -5,6 +5,7 @@ BASE_SOURCES = $(wildcard lib/base/*.c)
 
 include lib/base/host/host.mk
 
+lib/libbase.%.a: INCLUDES += lib/base/include
 lib/libbase.%.a: $(BASE_SOURCES:.c=.%.o)
 	${$*_library}
 
