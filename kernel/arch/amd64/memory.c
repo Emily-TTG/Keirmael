@@ -26,7 +26,8 @@ enum kml_base_result kml_kernel_memory_mapping_context_new(
 }
 
 enum kml_base_result kml_kernel_memory_mapping_context_load(kml_kernel_memory_mapping_context_t context) {
-	KML_BASE_ASM("movq %[table], %%cr3" :: [table]"a"(context) : "cr3");
+	const kml_base_pointer_t physical = kml_kernel_arch_allocated_physical((kml_base_byte_t*) context);
+	KML_BASE_ASM("movq %[table], %%cr3" :: [table]"a"(physical) : "cr3");
 
 	return KML_BASE_RESULT_OK;
 }

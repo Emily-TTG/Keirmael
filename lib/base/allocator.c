@@ -92,7 +92,7 @@ enum kml_base_result kml_base_allocator_allocation_new(
 	out->region = head;
 
 	do {
-		if(head->free < count) continue;
+		if(out->region->free < count) continue;
 
 		kml_base_size_t contiguous = 0;
 		for(out->index = 0; out->index < out->region->total; ++out->index) {

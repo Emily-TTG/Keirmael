@@ -19,6 +19,21 @@
 # endif
 #endif
 
+static const char* kml_kernel_arch_ultra_page_type_name(const kml_base_u64_t value) {
+	switch(value) {
+		default: [[fallthrough]];
+		case ULTRA_MEMORY_TYPE_INVALID: return "invalid";
+		case ULTRA_MEMORY_TYPE_FREE: return "free";
+		case ULTRA_MEMORY_TYPE_RESERVED: return "reserved";
+		case ULTRA_MEMORY_TYPE_RECLAIMABLE: return "reclaimable";
+		case ULTRA_MEMORY_TYPE_NVS: return "nvs";
+		case ULTRA_MEMORY_TYPE_LOADER_RECLAIMABLE: return "loader reclaimable";
+		case ULTRA_MEMORY_TYPE_MODULE: return "module";
+		case ULTRA_MEMORY_TYPE_KERNEL_STACK: return "kernel stack";
+		case ULTRA_MEMORY_TYPE_KERNEL_BINARY: return "kernel binary";
+	}
+}
+
 [[noreturn]]
 void kml_kernel_arch_ultra_start(
 		struct ultra_boot_context* boot_context, const uint32_t magic) {
@@ -132,8 +147,8 @@ enum kml_base_result kml_kernel_arch_boot_map_default(
 				const struct ultra_memory_map_entry* entry = &map->entries[j];
 
 				kml_base_log(
-					__FILE__, "Memory map entry: type $X, range $P->$P\n",
-					entry->type, entry->physical_address, entry->physical_address + entry->size);
+					__FILE__, "Memory map entry: type $S, range $P->$P\n",
+					kml_kernel_arch_ultra_page_type_name(entry->type), entry->physical_address, entry->physical_address + entry->size);
 
 				// TODO: Be more selective with protection.
 				// TODO: Use larger pages when range permits.
