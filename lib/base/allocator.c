@@ -144,7 +144,7 @@ enum kml_base_result kml_base_allocator_block_delete(
 		kml_base_byte_t* first = kml_base_allocator_region_get_block(head, head->total - 1);
 
 		if(block >= first && block <= last) {
-			kml_base_size_t index = (block - first) / head->block_size;
+			kml_base_size_t index = (last - block) / head->block_size;
 
 			if(!kml_base_bitset_get(head->data, index)) [[clang::unlikely]] {
 				return KML_BASE_RESULT_ERROR_PARAMETER_LIFETIME_OVER;
