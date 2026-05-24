@@ -78,8 +78,10 @@ enum kml_base_result kml_kernel_arch_boot_populate_allocator(
 					/// TODO: Hold reclaimable pages and add to allocator after final attribute is processed.
 					case ULTRA_MEMORY_TYPE_FREE: {
 						kml_base_pointer_t base = entry->physical_address;
+						kml_base_size_t size = entry->size;
 						if(!base && entry->size > KML_KERNEL_PAGE) {
 							base += KML_KERNEL_PAGE;
+							size -= KML_KERNEL_PAGE;
 
 							kml_base_log(__FILE__, "Skipping zero page in free memory range\n");
 						}
@@ -87,12 +89,12 @@ enum kml_base_result kml_kernel_arch_boot_populate_allocator(
 						base += KML_KERNEL_ARCH_ULTRA_DIRECT_MAP_BASE;
 
 						const enum kml_base_result result = kml_base_allocator_region_new(
-							*allocator, (kml_base_byte_t*) base, entry->size, KML_KERNEL_PAGE);
+							*allocator, (kml_base_byte_t*) base, size, KML_KERNEL_PAGE);
 
 						if(result) [[clang::unlikely]] {
 							kml_base_log_result(
 								__FILE__, result, "kml_base_allocator_region_new($P, $P, $Z, $Z)",
-								allocator, base, entry->size, KML_KERNEL_PAGE);
+								allocator, base, size, KML_KERNEL_PAGE);
 						}
 
 						if(!*allocator) *allocator = (struct kml_base_allocator_region*) base;
