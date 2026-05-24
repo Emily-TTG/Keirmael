@@ -43,7 +43,9 @@ enum kml_base_result kml_kernel_memory_mapping_new(
 	static constexpr kml_base_pointer_t level_mask = 0x1FF;
 	static constexpr kml_base_pointer_t level_count = KML_BASE_POPCOUNT(level_mask);
 
-	if(virtual & offset_mask || physical & offset_mask) [[clang::unlikely]] return KML_BASE_RESULT_ERROR_PARAMETER_NOT_ALIGNED;
+	const kml_base_size_t page_size = (kml_base_size_t) 1 << (offset_count + (granularity * level_count));
+
+	if(virtual & (page_size - 1) || physical & (page_size - 1)) [[clang::unlikely]] return KML_BASE_RESULT_ERROR_PARAMETER_NOT_ALIGNED;
 	// TODO: Test for non-canonical virtual address.
 
 	// TODO: Free any branches allocated by this mapping attempt on failure.
@@ -53,8 +55,6 @@ enum kml_base_result kml_kernel_memory_mapping_new(
 		out->granularity = granularity;
 		out->mapped = (kml_base_byte_t*) virtual;
 	}
-
-	const kml_base_size_t page_size = (kml_base_size_t) 1 << (offset_count + (granularity * level_count));
 
 	constexpr kml_base_size_t canonical_shift = (sizeof(kml_base_pointer_t) * KML_BASE_BYTE_BIT) - (offset_count + (KML_KERNEL_ARCH_AMD64_PML_MAX * level_count));
 
