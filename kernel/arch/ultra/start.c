@@ -36,13 +36,11 @@ static const char* kml_kernel_arch_ultra_page_type_name(const kml_base_u64_t val
 
 [[noreturn]]
 void kml_kernel_arch_ultra_start(
-		struct ultra_boot_context* boot_context, const uint32_t magic) {
+		struct ultra_boot_context* boot_context,
+		const uint32_t magic) {
 
 	if(magic != ULTRA_MAGIC) {
-		kml_base_log_result(
-				__FILE__, KML_BASE_RESULT_ERROR_INVALID_PARAMETER,
-				"kml_kernel_arch_ultra_start($P, $X) $X != $X",
-				boot_context, magic, magic, ULTRA_MAGIC);
+		KML_BASE_LOG_RESULT(KML_BASE_RESULT_ERROR_INVALID_PARAMETER, "kml_kernel_arch_ultra_start($P, $X) $X != $X", boot_context, magic, magic, ULTRA_MAGIC);
 	}
 
 	kml_kernel_arch_start(boot_context);
@@ -57,7 +55,8 @@ kml_base_byte_t* kml_kernel_arch_physical_allocated(kml_base_pointer_t physical)
 }
 
 enum kml_base_result kml_kernel_arch_boot_populate_allocator(
-		const kml_kernel_arch_boot_data_t boot_data, struct kml_base_allocator_region** allocator) {
+		const kml_kernel_arch_boot_data_t boot_data,
+		struct kml_base_allocator_region** allocator) {
 
 	struct ultra_boot_context* boot_context = boot_data;
 
@@ -83,7 +82,7 @@ enum kml_base_result kml_kernel_arch_boot_populate_allocator(
 							base += KML_KERNEL_PAGE;
 							size -= KML_KERNEL_PAGE;
 
-							kml_base_log(__FILE__, "Skipping zero page in free memory range\n");
+							KML_BASE_LOG("Skipping zero page in free memory range\n");
 						}
 
 						base += KML_KERNEL_ARCH_ULTRA_DIRECT_MAP_BASE;
@@ -92,9 +91,7 @@ enum kml_base_result kml_kernel_arch_boot_populate_allocator(
 							*allocator, (kml_base_byte_t*) base, size, KML_KERNEL_PAGE);
 
 						if(result) [[clang::unlikely]] {
-							kml_base_log_result(
-								__FILE__, result, "kml_base_allocator_region_new($P, $P, $Z, $Z)",
-								allocator, base, size, KML_KERNEL_PAGE);
+							KML_BASE_LOG_RESULT(result, "kml_base_allocator_region_new($P, $P, $Z, $Z)", allocator, base, size, KML_KERNEL_PAGE);
 						}
 
 						if(!*allocator) *allocator = (struct kml_base_allocator_region*) base;
@@ -111,22 +108,12 @@ enum kml_base_result kml_kernel_arch_boot_populate_allocator(
 	struct kml_base_allocator_statistics allocator_statistics;
 	kml_base_allocator_region_get_statistics(*allocator, &allocator_statistics);
 
-	kml_base_log(__FILE__, "Allocator statistics:\n");
-	kml_base_log(
-		__FILE__, "\tBlock size: $Z\n",
-		allocator_statistics.block_size);
+	KML_BASE_LOG("Allocator statistics:\n");
+	KML_BASE_LOG("\tBlock size: $Z\n", allocator_statistics.block_size);
 
-	kml_base_log(
-		__FILE__, "\tTotal: $Z blocks ($Z B)\n",
-		allocator_statistics.total, allocator_statistics.total * allocator_statistics.block_size);
-
-	kml_base_log(
-		__FILE__, "\tFree: $Z blocks ($Z B)\n",
-		allocator_statistics.free, allocator_statistics.free * allocator_statistics.block_size);
-
-	kml_base_log(
-		__FILE__, "\tMax Contiguous Free: $Z blocks ($Z B)\n",
-		allocator_statistics.max_contiguous_free, allocator_statistics.max_contiguous_free * allocator_statistics.block_size);
+	kml_base_log(__FILE__, "\tTotal: $Z blocks ($Z B)\n", allocator_statistics.total, allocator_statistics.total * allocator_statistics.block_size);
+	kml_base_log(__FILE__, "\tFree: $Z blocks ($Z B)\n", allocator_statistics.free, allocator_statistics.free * allocator_statistics.block_size);
+	kml_base_log(__FILE__, "\tMax Contiguous Free: $Z blocks ($Z B)\n", allocator_statistics.max_contiguous_free, allocator_statistics.max_contiguous_free * allocator_statistics.block_size);
 
 	return KML_BASE_RESULT_OK;
 }
@@ -148,9 +135,7 @@ enum kml_base_result kml_kernel_arch_boot_map_default(
 			for(kml_base_size_t j = 0; j < ULTRA_MEMORY_MAP_ENTRY_COUNT(*attribute); ++j) {
 				const struct ultra_memory_map_entry* entry = &map->entries[j];
 
-				kml_base_log(
-					__FILE__, "Memory map entry: type $S, range $P->$P\n",
-					kml_kernel_arch_ultra_page_type_name(entry->type), entry->physical_address, entry->physical_address + entry->size);
+				kml_base_log(__FILE__, "Memory map entry: type $S, range $P->$P\n", kml_kernel_arch_ultra_page_type_name(entry->type), entry->physical_address, entry->physical_address + entry->size);
 
 				// TODO: Be more selective with protection.
 				// TODO: Use larger pages when range permits.
@@ -167,9 +152,7 @@ enum kml_base_result kml_kernel_arch_boot_map_default(
 		else if(attribute->type == ULTRA_ATTRIBUTE_KERNEL_INFO) {
 			const struct ultra_kernel_info_attribute* kernel = (struct ultra_kernel_info_attribute*) attribute;
 
-			kml_base_log(
-				__FILE__, "Kernel mapping: physical $P, range $P->$P\n",
-				kernel->physical_base, kernel->virtual_base, kernel->virtual_base + kernel->size);
+			kml_base_log(__FILE__, "Kernel mapping: physical $P, range $P->$P\n", kernel->physical_base, kernel->virtual_base, kernel->virtual_base + kernel->size);
 
 			result = kml_kernel_memory_mapping_new(
 					allocator, mapping_context, nullptr,

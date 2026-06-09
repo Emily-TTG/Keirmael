@@ -10,7 +10,7 @@ enum kml_base_result kml_base_main(void);
 int main(void) {
 	enum kml_base_result result = kml_base_main();
 	if(result) [[clang::unlikely]] {
-		kml_base_log_result(__FILE__, result, "kml_base_main()");
+		KML_BASE_LOG_RESULT(result, "kml_base_main()");
 		return 1;
 	}
 

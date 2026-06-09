@@ -30,13 +30,19 @@ struct kml_kernel_memory_mapping {
 typedef void* kml_kernel_memory_mapping_context_t;
 
 enum kml_base_result kml_kernel_memory_mapping_context_new(
-		struct kml_base_allocator_region*, kml_kernel_memory_mapping_context_t*);
+		struct kml_base_allocator_region*,
+		kml_kernel_memory_mapping_context_t*);
 
 enum kml_base_result kml_kernel_memory_mapping_context_load(kml_kernel_memory_mapping_context_t);
 
 enum kml_base_result kml_kernel_memory_mapping_new(
-		struct kml_base_allocator_region*, kml_kernel_memory_mapping_context_t,
-		struct kml_kernel_memory_mapping*, kml_base_pointer_t, kml_base_pointer_t, kml_base_size_t,
-		enum kml_kernel_memory_mapping_granularity, enum kml_kernel_memory_mapping_protection);
+		struct kml_base_allocator_region*,
+		kml_kernel_memory_mapping_context_t,
+		struct kml_kernel_memory_mapping*,
+		kml_base_pointer_t,
+		kml_base_pointer_t,
+		kml_base_size_t,
+		enum kml_kernel_memory_mapping_granularity,
+		enum kml_kernel_memory_mapping_protection);
 
 enum kml_base_result kml_kernel_memory_mapping_delete(struct kml_kernel_memory_mapping*);

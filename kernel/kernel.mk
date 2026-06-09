@@ -19,6 +19,7 @@ kernel/kernel.%.out: $(KERNEL_SOURCES:.c=.%.o) $(KERNEL_ASM:.S=.%.o) lib/libfat.
 .PHONY: clean_kernel
 clean_kernel: clean_hyper clean_kernel_host
 	rm -f $(KERNEL_SOURCES:.c=.host.o)
+	rm -f $(KERNEL_ASM:.S=.host.o)
 	rm -f kernel/kernel.host.out
 
 	rm -f $(KERNEL_SOURCES:.c=.target.o)

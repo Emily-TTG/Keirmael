@@ -5,6 +5,6 @@
 #include <kml/base/log.h>
 
 enum kml_base_result kml_base_main(void) {
-	kml_base_log_result(__FILE__, KML_BASE_RESULT_ERROR_UNKNOWN, "foo($I)", 2147483648);
+	KML_BASE_LOG_RESULT(KML_BASE_RESULT_ERROR_UNKNOWN, "foo($I)", 2147483648);
 	return KML_BASE_RESULT_OK;
 }

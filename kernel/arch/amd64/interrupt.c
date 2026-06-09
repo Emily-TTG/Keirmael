@@ -19,5 +19,5 @@ void kml_kernel_arch_amd64_interrupt_service_routine(
 		const enum kml_kernel_arch_amd64_idt_vector vector,
 		struct kml_kernel_arch_amd64_interrupt_service_routine_data* data) {
 
-		kml_base_log(__FILE__, "isr($U) -> $P\n", (unsigned) vector, data);
+	KML_BASE_LOG("isr($U) -> $P\n", (unsigned) vector, data);
 }

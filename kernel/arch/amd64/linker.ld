@@ -5,7 +5,7 @@ ENTRY(kml_kernel_arch_ultra_start)
 
 SECTIONS
 {
-	. = 0xffffffff80000000;
+	. = 0xFFFFFFFF80000000;
 
     .text : { *(.text .text.*) } :text
 

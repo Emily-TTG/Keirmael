@@ -19,7 +19,7 @@ kml_base_pointer_t kml_kernel_arch_allocated_physical(kml_base_byte_t* allocated
 	return (kml_base_pointer_t) allocated;
 }
 
-kml_base_byte_t* kml_kernel_arch_physical_allocated(kml_base_pointer_t physical) {
+kml_base_byte_t* kml_kernel_arch_physical_allocated(const kml_base_pointer_t physical) {
 	return (kml_base_byte_t*) physical;
 }
 
@@ -40,32 +40,40 @@ enum kml_base_result kml_base_main() {
 
 	struct kml_base_allocator_region* region;
 	{
-		const kml_base_size_t size = sysconf(_SC_PAGE_SIZE) * 1024;
+		const long page_size = sysconf(_SC_PAGE_SIZE);
+		if(page_size == -1) {
+			kml_base_host_log_errno(__FILE__, "sysconf(_SC_PAGE_SIZE)");
+			return KML_BASE_RESULT_ERROR_INVALID_PARAMETER;
+		}
+
+		const kml_base_size_t size = page_size * 1024;
 		kml_base_pointer_t base;
 		do {
 			// We want a low mapping so we can represent resultant allocations in
 			// short physical address fields.
-			FILE* f = fopen("/proc/sys/vm/mmap_min_addr", "r");
-			if(!f) {
+			FILE* file = fopen("/proc/sys/vm/mmap_min_addr", "r");
+			if(!file) {
 				kml_base_host_log_errno(__FILE__, "fopen(\"/proc/sys/vm/mmap_min_addr\", \"r\")");
 				base = size;
 				break;
 			}
 
 			unsigned base_raw;
-			if(fscanf(f, "%u", &base_raw) == EOF) {
-				kml_base_host_log_errno(__FILE__, "fscanf($P, \"%u\", $P)", f, &base_raw);
+			if(fscanf(file, "%u", &base_raw) == EOF) {
+				kml_base_host_log_errno(__FILE__, "fscanf($P, \"%u\", $P)", file, &base_raw);
 				base = size;
 			}
 			else base = base_raw;
 
-			fclose(f);
+			fclose(file);
 		} while(false);
 
 		void* buffer = mmap((void*) base, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE, -1, 0);
 		if(!buffer) {
 			kml_base_host_log_errno(
-				__FILE__, "mmap($P, $Z, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE, -1, 0)", base, size);
+					__FILE__,
+					"mmap($P, $Z, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE, -1, 0)",
+					base, size);
 
 			return KML_BASE_RESULT_ERROR_OUT_OF_MEMORY;
 		}
@@ -82,9 +90,14 @@ enum kml_base_result kml_base_main() {
 	if(result) return result;
 
 	result = kml_kernel_memory_mapping_new(
-		region, context, nullptr, 0, 0xFFFF'8000'0000'0000,
-		20, KML_KERNEL_MEMORY_MAPPING_GRANULARITY_4KIB,
-		KML_KERNEL_MEMORY_MAPPING_PROTECTION_READ);
+			region,
+			context,
+			nullptr,
+			0,
+			0xFFFF'8000'0000'0000,
+			20,
+			KML_KERNEL_MEMORY_MAPPING_GRANULARITY_4KIB,
+			KML_KERNEL_MEMORY_MAPPING_PROTECTION_READ);
 
 	if(result) return result;
 

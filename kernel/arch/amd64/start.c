@@ -23,58 +23,47 @@ enum kml_base_result kml_base_log_character(int character) {
 void kml_kernel_arch_start(void* boot_data) {
 	enum kml_base_result result = kml_kernel_arch_amd64_gdt_load();
 	if(result) [[clang::unlikely]] {
-		kml_base_log_result(
-				__FILE__, result, "kml_kernel_arch_amd64_gdt_load()");
+		KML_BASE_LOG_RESULT(result, "kml_kernel_arch_amd64_gdt_load()");
+		goto terminate;
 	}
 
 	result = kml_kernel_arch_amd64_idt_load();
 	if(result) [[clang::unlikely]] {
-		kml_base_log_result(
-				__FILE__, result, "kml_kernel_arch_amd64_idt_load()");
+		KML_BASE_LOG_RESULT(result, "kml_kernel_arch_amd64_idt_load()");
+		goto terminate;
 	}
 
 	struct kml_base_allocator_region* allocator;
+	// TODO: Determine failure mode and whether we're safe to proceed with a partial allocator.
 	result = kml_kernel_arch_boot_populate_allocator(boot_data, &allocator);
 	if(result) [[clang::unlikely]] {
-		kml_base_log_result(
-				__FILE__, result, "kml_kernel_arch_boot_populate_allocator($P, $P)",
-				boot_data, &allocator);
+		KML_BASE_LOG_RESULT(result, "kml_kernel_arch_boot_populate_allocator($P, $P)", boot_data, &allocator);
+		goto terminate;
 	}
 
 	kml_kernel_memory_mapping_context_t mapping_context;
 	result = kml_kernel_memory_mapping_context_new(allocator, &mapping_context);
 	if(result) [[clang::unlikely]] {
-		kml_base_log_result(
-				__FILE__, result, "kml_kernel_memory_mapping_context_new($P, $P)",
-				allocator, &mapping_context);
-
+		KML_BASE_LOG_RESULT(result, "kml_kernel_memory_mapping_context_new($P, $P)", allocator, &mapping_context);
 		goto terminate;
 	}
 
 	result = kml_kernel_arch_boot_map_default(boot_data, allocator, mapping_context);
 	if(result) [[clang::unlikely]] {
-		kml_base_log_result(
-				__FILE__, result, "kml_kernel_arch_boot_map_default($P, $P, $P)",
-				boot_data, allocator, mapping_context);
-
+		KML_BASE_LOG_RESULT(result, "kml_kernel_arch_boot_map_default($P, $P, $P)", boot_data, allocator, mapping_context);
 		goto terminate;
 	}
 
 	result = kml_kernel_memory_mapping_context_load(mapping_context);
 	if(result) [[clang::unlikely]] {
-		kml_base_log_result(
-				__FILE__, result, "kml_kernel_memory_mapping_context_load($P)",
-				mapping_context);
-
+		KML_BASE_LOG_RESULT(result, "kml_kernel_memory_mapping_context_load($P)", mapping_context);
 		goto terminate;
 	}
 
-	kml_base_log_result(
-			__FILE__, KML_BASE_RESULT_ERROR_INVALID_CONTROL_PATH,
-			"kml_kernel_arch_amd64_start($P)", boot_data);
+	KML_BASE_LOG_RESULT(KML_BASE_RESULT_ERROR_INVALID_CONTROL_PATH, "kml_kernel_arch_amd64_start($P)", boot_data);
 
 terminate:
-	kml_base_log(__FILE__, "The kernel has encountered a fatal error and cannot continue\n");
+	KML_BASE_LOG("The kernel has encountered a fatal error and cannot continue\n");
 
 	volatile enum kml_base_bool halt = KML_BASE_BOOL_TRUE;
 	while(halt) {

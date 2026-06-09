@@ -18,7 +18,10 @@ kml_base_pointer_t kml_kernel_arch_allocated_physical(kml_base_byte_t*);
 kml_base_byte_t* kml_kernel_arch_physical_allocated(kml_base_pointer_t);
 
 enum kml_base_result kml_kernel_arch_boot_populate_allocator(
-		kml_kernel_arch_boot_data_t, struct kml_base_allocator_region**);
+		kml_kernel_arch_boot_data_t,
+		struct kml_base_allocator_region**);
 
 enum kml_base_result kml_kernel_arch_boot_map_default(
-		kml_kernel_arch_boot_data_t, struct kml_base_allocator_region*, kml_kernel_memory_mapping_context_t);
+		kml_kernel_arch_boot_data_t,
+		struct kml_base_allocator_region*,
+		kml_kernel_memory_mapping_context_t);

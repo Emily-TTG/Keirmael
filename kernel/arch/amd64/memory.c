@@ -11,7 +11,8 @@
 #include <kml/kernel/arch/amd64/table.h>
 
 enum kml_base_result kml_kernel_memory_mapping_context_new(
-		struct kml_base_allocator_region* allocator, kml_kernel_memory_mapping_context_t* out) {
+		struct kml_base_allocator_region* allocator,
+		kml_kernel_memory_mapping_context_t* out) {
 
 	kml_base_byte_t* allocated;
 
@@ -25,16 +26,22 @@ enum kml_base_result kml_kernel_memory_mapping_context_new(
 	return KML_BASE_RESULT_OK;
 }
 
-enum kml_base_result kml_kernel_memory_mapping_context_load(kml_kernel_memory_mapping_context_t context) {
-	const kml_base_pointer_t physical = kml_kernel_arch_allocated_physical((kml_base_byte_t*) context);
+enum kml_base_result kml_kernel_memory_mapping_context_load(
+		kml_kernel_memory_mapping_context_t context) {
+
+	const kml_base_pointer_t physical = kml_kernel_arch_allocated_physical(context);
 	KML_BASE_ASM("movq %[table], %%cr3" :: [table]"a"(physical) : "cr3");
 
 	return KML_BASE_RESULT_OK;
 }
 
 enum kml_base_result kml_kernel_memory_mapping_new(
-		struct kml_base_allocator_region* allocator, const kml_kernel_memory_mapping_context_t context, struct kml_kernel_memory_mapping* out,
-		const kml_base_pointer_t physical, const kml_base_pointer_t virtual, const kml_base_size_t count,
+		struct kml_base_allocator_region* allocator,
+		const kml_kernel_memory_mapping_context_t context,
+		struct kml_kernel_memory_mapping* out,
+		const kml_base_pointer_t physical,
+		const kml_base_pointer_t virtual,
+		const kml_base_size_t count,
 		const enum kml_kernel_memory_mapping_granularity granularity,
 		const enum kml_kernel_memory_mapping_protection protection) {
 
@@ -45,7 +52,10 @@ enum kml_base_result kml_kernel_memory_mapping_new(
 
 	const kml_base_size_t page_size = (kml_base_size_t) 1 << (offset_count + (granularity * level_count));
 
-	if(virtual & (page_size - 1) || physical & (page_size - 1)) [[clang::unlikely]] return KML_BASE_RESULT_ERROR_PARAMETER_NOT_ALIGNED;
+	if(virtual & (page_size - 1) || physical & (page_size - 1)) [[clang::unlikely]] {
+		return KML_BASE_RESULT_ERROR_PARAMETER_NOT_ALIGNED;
+	}
+
 	// TODO: Test for non-canonical virtual address.
 
 	// TODO: Free any branches allocated by this mapping attempt on failure.
@@ -56,7 +66,9 @@ enum kml_base_result kml_kernel_memory_mapping_new(
 		out->mapped = (kml_base_byte_t*) virtual;
 	}
 
-	constexpr kml_base_size_t canonical_shift = (sizeof(kml_base_pointer_t) * KML_BASE_BYTE_BIT) - (offset_count + (KML_KERNEL_ARCH_AMD64_PML_MAX * level_count));
+	constexpr kml_base_size_t canonical_shift =
+			(sizeof(kml_base_pointer_t) * KML_BASE_BYTE_BIT) -
+			(offset_count + (KML_KERNEL_ARCH_AMD64_PML_MAX * level_count));
 
 	for(kml_base_size_t page = 0; page < count; ++page) {
 		const kml_base_pointer_t page_physical = physical + page * page_size;
@@ -71,7 +83,9 @@ enum kml_base_result kml_kernel_memory_mapping_new(
 
 			entry = &head[index];
 			if(entry->present) {
-				if(i == granularity) [[clang::unlikely]] return KML_BASE_RESULT_ERROR_VALUE_ALREADY_SET;
+				if(i == granularity) [[clang::unlikely]] {
+					return KML_BASE_RESULT_ERROR_VALUE_ALREADY_SET;
+				}
 			}
 			else {
 				if(i == granularity) break;
@@ -87,7 +101,8 @@ enum kml_base_result kml_kernel_memory_mapping_new(
 				entry->address = kml_kernel_arch_allocated_physical(allocated) >> offset_count;
 			}
 
-			head = (struct kml_kernel_arch_amd64_page_table_entry*) kml_kernel_arch_physical_allocated((kml_base_pointer_t) entry->address << offset_count);
+			head = (struct kml_kernel_arch_amd64_page_table_entry*) kml_kernel_arch_physical_allocated(entry->address << offset_count);
+
 			entry = nullptr;
 		}
 
